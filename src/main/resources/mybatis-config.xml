@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--根标签-->
+<configuration>
+
+    <!--properties属性配置-->
+    <properties resource="db.properties">    <!--db.properties是在当前同级目录下-->
+        <property name="name" value="root"/>
+        <property name="passwd" value="1234"/>    <!--测试优先级-->
+    </properties>
+
+    <!--settings：全局的设置信息-->
+    <!--<settings>-->
+        <!--&lt;!&ndash;二级缓存的配置信息&ndash;&gt;-->
+        <!--<setting name="cacheEnabled" value="true"/>-->
+    <!--</settings>-->
+
+    <typeAliases>
+        <!--对于单个类取别名-->
+        <!--<typeAlias type="com.tulun.maventest.pojo.Student" alias="student"/>-->
+
+        <!--批量取别名(他把该包下的所有类都取别名，默认把首字母改成小写)：student-->
+        <package name="com.tulun.maventest.pojo"/>
+    </typeAliases>
+
+    <!--配置数据源  在整合Spring后不用在mybatis配置文件中写-->
+    <environments default="development">
+        <!--id:环境的唯一标识-->
+        <environment id="development">
+            <!--事务管理器-->
+            <transactionManager type="JDBC"></transactionManager>
+            <!--数据源类型-->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/tulun?useSSL=false"/>
+                <!--<property name="username" value="root"/>-->
+                <!--<property name="password" value="123456"/>-->
+                <property name="username" value="${name}"/>
+                <property name="password" value="${passwd}"/>
+            </dataSource>
+
+        </environment>
+    </environments>
+
+    <!--以相对路径(resources)的方式引入mapper配置文件   和 Spring整合时，可以省略，在Spring里写就行    classpath/-->
+    <mappers>
+        <!--resource配置单个映射文件  mapper下面的接口文件（如StudentMapper） 和 mapper下面的xml文件（如StudentMapper.xml）可以不在同一路径下，且两个名称可以不一样-->
+        <mapper resource="mapper/StudentMapper.xml"/>
+
+        <mapper resource="mapper/UserMapper.xml"/>
+
+        <!--class:映射单个文件 ，指定的接口文件要遵循指定规则：mapper.xml和mapper.java必须是同一路径下，且名称保持相同-->
+        <!--<mapper class="com.tulun.maventest.mapper.StudentMapper"/>-->
+        <!--package:批量的(如同一包下)映射文件处理，遵循指定规则：mapper.xml和mapper.java必须是同一路径下，且名称保持相同-->
+        <!--<package name="com.tulun.maventest.mapper"/>-->
+    </mappers>
+</configuration>

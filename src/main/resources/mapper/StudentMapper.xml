@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper根标签 namespace，命令空间：保证命名空间唯一，一般是对应的mapper.接口的包全路径,按ctrl键能跳转过去-->
+<mapper namespace="com.tulun.maventest.mapper.StudentMapper">
+
+    <!--
+       接口 里有的方法再在xml文件里配置sql语句
+    -->
+
+    <!--字段名不一致，自定义映射    student是自己起的别名，在mybatis-config.xml里-->
+<resultMap id="studentResult" type="student">
+    <result column="SID" property="id"/>
+    <result column="Sname" property="Sname"/>
+    <result column="Ssex"  property="Ssex"/>
+    <result column="Sage" property="Sage"/>
+</resultMap>
+    <!--
+    select标签：查询操作
+       id属性（必须有）：statement的id（和接口里方法名一致），用于表示定义的SQL，在 同一个 命名空间中id是不允许重复的
+       #{XXX}:输入参数（和接口里形参的名字一致）的占位符，避免SQL注入（底层用prepareStatement实现，转为？）
+       parameterType：输入 参数类型
+       resultType:指定 结果 集类型（对象的全路径）
+    -->
+    <select id="selectStudentById" parameterType="int" resultMap="studentResult" >
+        select * from Student where SID = #{id}
+    </select>
+
+    <!--
+    类型是student，因为起别名了     pojo的属性专门改成id了(注意要有get  set方法)，和数据库段名不一致
+
+    if标签：包含test表达式 必填，通过ognl表达式进行判断，true和false，
+            如果为真，会执行if中的SQL
+            如果为假，则不执行if中的SQL
+    -->
+    <select id="selectStudentByDIY" parameterType="student" resultType="student">
+        select * from Student where  1=1
+        <if test="SID != null and SID != 0">
+            and SID = #{Sid}
+        </if>
+        <if test="Sname != null ">
+            and Sname  = #{Sname}
+        </if>
+    </select>
+
+
+    <!-- 批量查询
+    select * from Student where SID in  (   1,    2,    3,   4,    5    );
+     select * from Student where SID in ( #{id},#{id},#{id},#{id},#{id} );
+    -->
+    <select id="selectStudentByIds" resultType="student">
+        select * from student where SID in
+        <foreach collection="list" item="id"  open="(" close=")" separator="," index="">
+            #{id}
+        </foreach>
+    </select>
+
+
+    <!--此处只管 返回类型,  不管是单个还是多个对象-->
+    <select id="findAll"  resultMap="studentResult">
+        select * from Student
+    </select>
+
+    <!--不关心返回值，就不写-->
+    <delete id="deleteStudentById"  parameterType="int" >
+        delete from Student where SID= #{id}
+    </delete>
+
+    <!--不关心返回值，就不写-->
+    <!--<update id="updateSnameById"  parameterType="com.tulun.maventest.pojo.Student" >-->
+        <!--update Student set sname = #{sname} where sid = #{sid}-->
+    <!--</update>-->
+    <update id="updateSnameById"  parameterType="Map" >
+        update Student set sname = #{sname} where sid = #{sid}
+    </update>
+
+    <!--values后面是Student对象里的属性名-->
+    <insert id="insertStudent"  parameterType="com.tulun.maventest.pojo.Student" >
+        insert into  student(SID, Sname, Sage, Ssex)  values (#{id}, #{Sname}  ,#{Sage}, #{Ssex} )
+    </insert>
+</mapper>

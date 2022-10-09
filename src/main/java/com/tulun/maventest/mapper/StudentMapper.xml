@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper根标签 namespace，命令空间：保证命名空间唯一，一般是对应的mapper.java的包全路径,按ctrl键能跳转过去-->
+<mapper namespace="com.tulun.maventest.mapper.StudentMapper">
+
+    <!--
+    selectStudentById
+    select * from Student where SID = XXX
+    -->
+
+    <!--
+    select标签：查询操作
+       id属性：statement的id（和接口里方法名一致），用于表示定义的SQL，在 同一个 命名空间中id是不允许重复的
+       #{XXX}:输入参数（和接口里形参的名字一致）的占位符，避免SQL注入（底层用prepareStatement实现，转为？）
+       parameterType：输入参数类型
+       resultType:指定结果集类型（对象的全路径）
+    -->
+    <select id="selectStudentById" parameterType="int" resultType="student" >
+        select * from Student where SID = #{id}
+    </select>
+
+    <!--不关心返回值，就不写-->
+    <delete id="deleteStudentById"  parameterType="int" >
+        delete from Student where SID= #{id}
+    </delete>
+
+    <!--不关心返回值，就不写-->
+    <!--<update id="updateSnameById"  parameterType="com.tulun.maventest.pojo.Student" >-->
+    <!--update Student set sname = #{sname} where sid = #{sid}-->
+    <!--</update>-->
+    <update id="updateSnameById"  parameterType="Map" >
+        update Student set sname = #{sname} where sid = #{sid}
+    </update>
+
+    <insert id="insertStudent"  parameterType="com.tulun.maventest.pojo.Student" >
+        insert into  student(SID, Sname, Sage, Ssex)  values (#{SID}, #{Sname}  ,#{Sage}, #{Ssex} )
+    </insert>
+</mapper>
